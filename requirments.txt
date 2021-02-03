@@ -1,0 +1,14 @@
+discord.py
+discord
+PIL
+Image
+io 
+BytesIO
+random
+randint
+asyncio
+apraw
+os
+dbl
+keep_alive
+json
