@@ -1,8 +1,9 @@
 [tool.poetry]
-name = "spam-bot-discord"
+[tool.poetry]
+name = "monke-bot-discord"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["cmcool <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -10,6 +11,7 @@ discord = "^1.0.1"
 praw = "^7.1.0"
 flask = "^1.1.2"
 dblpy = "^0.4.0"
+aPRAW = "^0.6.8a0"
 
 [tool.poetry.dev-dependencies]
 
