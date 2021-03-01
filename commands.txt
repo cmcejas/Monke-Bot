@@ -5,7 +5,7 @@
 
 {meme} sends one of the top memes from reddit
 
-<:joystick:816076164074438717> | **Other Games**
+<:joystick:816076164074438717> | **OTHER GAMES**
 
 {rps} play rock, paper, scissors with the bot
 
