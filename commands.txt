@@ -5,6 +5,10 @@
 
 {meme} sends one of the top memes from reddit
 
+<:joystick:816076164074438717> | **Other Games**
+
+{rps} play rock, paper, scissors with the bot
+
 <:moneybag:797096041643638855> | **ECONOMY**
 {balance @example} gives you your current balance
 {beg} gives you an amount of money
