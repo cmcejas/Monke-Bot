@@ -34,13 +34,6 @@ async def on_ready():
     print("Bot is online")
     await client.change_presence(activity=discord.Game(name="in " + str(len(client.guilds)) + " Servers | .help", type=0))
 
-# sends a message when the bot joins a server
-@client.event
-async def on_guild_join(guild):
-    for channel in guild.text_channels:
-        if channel.permissions_for(guild.me).send_messages:
-            await channel.send('Hey @here! I am Monke Bot. Find out what I can do by using the ``.help`` command \:)')
-
 # sends a meme when u write .meme REDDIT API YAY
 @client.command()
 async def meme(ctx):
@@ -55,7 +48,43 @@ async def meme(ctx):
 		embed.set_footer(
 		    text=f'👍 {submission.score}  |  💬 {submission.num_comments}')
 		await ctx.send(embed=embed)
-    
+#------------------------------Other Games-------------------------------------------   
+
+# rock paper scissors
+@client.command(help="Play with .rps [your choice]")
+async def rps(ctx):
+    rpsGame = ['rock', 'paper', 'scissors']
+    await ctx.send(f"Rock, paper, or scissors? Choose wisely...")
+
+    def check(msg):
+        return msg.author == ctx.author and msg.channel == ctx.channel and msg.content.lower() in rpsGame
+
+    user_choice = (await client.wait_for('message', check=check)).content
+
+    comp_choice = random.choice(rpsGame)
+    if user_choice == 'rock':
+        if comp_choice == 'rock':
+            await ctx.send(f'Well, {ctx.author.mention} that was weird. We tied.\nYour choice: {user_choice}\nMy choice: {comp_choice}')
+        elif comp_choice == 'paper':
+            await ctx.send(f'LOL get destroyed {ctx.author.mention} you noob, I won that time!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
+        elif comp_choice == 'scissors':
+            await ctx.send(f"WOW, {ctx.author.mention} you beat me. That was noob luck it won't happen again!\nYour choice: {user_choice}\nMy choice: {comp_choice}")
+
+    elif user_choice == 'paper':
+        if comp_choice == 'rock':
+            await ctx.send(f'HAHA {ctx.author.mention}, you are so bad you lost!!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
+        elif comp_choice == 'paper':
+            await ctx.send(f'Oh, what?{ctx.author.mention} we just tied. I call a rematch!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
+        elif comp_choice == 'scissors':
+            await ctx.send(f"{ctx.author.mention}You only won because you are cheating smh.\nYour choice: {user_choice}\nMy choice: {comp_choice}")
+
+    elif user_choice == 'scissors':
+        if comp_choice == 'rock':
+            await ctx.send(f'HAHA!! I JUST CRUSHED YOU, {ctx.author.mention}!! I rock!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
+        elif comp_choice == 'paper':
+            await ctx.send(f'Bruh {ctx.author.mention}. How did you win???\nYour choice: {user_choice}\nMy choice: {comp_choice}')
+        elif comp_choice == 'scissors':
+            await ctx.send(f"Oh well {ctx.author.mention}, we tied.\nYour choice: {user_choice}\nMy choice: {comp_choice}")
 #-----------------------------Economy System-----------------------------------------
 
 # balance command
@@ -89,7 +118,7 @@ async def beg(ctx):
 
   earnings = random.randint(5, 50)
 
-  await ctx.send(f"Monke gave you {earnings} coins!")
+  await ctx.send(f"Monke gave {ctx.author.mention} {earnings} coins!")
 
   users[str(user.id)]["wallet"] += earnings
 
@@ -198,7 +227,7 @@ async def gift(ctx,member:discord.Member,amount = None):
   await update_bank(ctx.author,-1*amount,"bank")
   await update_bank(member,amount,"bank")
 
-  await ctx.send(f"{ctx.author} gave {amount} coins to {member}!")
+  await ctx.send(f"{ctx.author.mention} gave {amount} coins to {member.mention}!")
 
 # rob command
 @client.command()
@@ -218,7 +247,7 @@ async def rob(ctx,member:discord.Member):
   await update_bank(ctx.author,stolen_money)
   await update_bank(member,-1*stolen_money)
 
-  await ctx.send(f"{ctx.author} robbed {member} for {stolen_money} coins!")
+  await ctx.send(f"{ctx.author.mention} robbed {member.mention} for {stolen_money} coins!")
 
 #slots command
 @client.command()
