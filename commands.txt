@@ -7,6 +7,7 @@
 
 <:joystick:816076164074438717> | **OTHER GAMES**
 
+{tictactoe @you @friend} play tic-tac-toe with your friends!
 {rps} play rock, paper, scissors with the bot
 
 <:moneybag:797096041643638855> | **ECONOMY**
@@ -48,6 +49,5 @@
 {website} gives you the website link
 {ping} gives you Monke Bot's current ping
 {about} Tells you info about the bot
-*more will be added soon
 --------------------------------
 created by: cmcool #0961
