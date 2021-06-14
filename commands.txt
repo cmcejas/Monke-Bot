@@ -44,10 +44,13 @@
 
 <:newspaper:789279135620923403> |**INFO COMMANDS**
 
-{invite} gives you the bot invite link
-{srvinvite} gives you the help server invite
-{website} gives you the website link
-{ping} gives you Monke Bot's current ping
 {about} Tells you info about the bot
+{dbl} sends the discord bot list page
+{invite} gives you the bot invite link
+{ping} gives you Monke Bot's current ping
+{srvinvite} gives you the help server invite
+{topgg} sends the top.gg page of the bot
+{upvote} gives you the site to upvote the bot
+{website} gives you the website link
 --------------------------------
 created by: cmcool #0961
