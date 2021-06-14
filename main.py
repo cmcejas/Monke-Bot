@@ -850,7 +850,7 @@ async def help(ctx):
     with open("commands.txt", "r") as f:
         scores = f.read().splitlines()
 
-    final = '\n'.join(scores[0:53])
+    final = '\n'.join(scores[0:55])
     embed=discord.Embed(title="Commands", description=final)
     embed.colour = (0x964b00)
     await ctx.send(embed = embed)
@@ -886,10 +886,15 @@ async def invite(ctx):
 async def srvinvite(ctx):
   await ctx.send('discord.gg/HpEGNvur28')
 
-# sends the bot's top.gg page when .upvote is input
+# sends the bot topgg page when .topgg is sent
 @client.command()
-async def upvote(ctx):
-  await ctx.send('You can upvote me here: https://top.gg/bot/778424945607704576/vote')
+async def topgg(ctx):
+  await ctx.send('https://top.gg/bot/778424945607704576')
+
+# sends the bot's discord bot list page when .dbl is input
+@client.command()
+async def dbl(ctx):
+  await ctx.send('https://discord.ly/monke-bot')
 
 # sends the bot's website link
 @client.command()
