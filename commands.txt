@@ -50,7 +50,6 @@
 {ping} gives you Monke Bot's current ping
 {srvinvite} gives you the help server invite
 {topgg} sends the top.gg page of the bot
-{upvote} gives you the site to upvote the bot
 {website} gives you the website link
 --------------------------------
 created by: cmcool #0961
