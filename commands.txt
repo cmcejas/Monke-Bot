@@ -27,13 +27,14 @@
 
 <:art:789278692076945419> |**IMAGE EDIT COMMANDS**
 
-{biggiecheese @example} puts someones pfp over biggiecheese's face
+{amogus @example} puts someone's pfp over an among us crewmate. sus
+{biggiecheese @example} puts someone's pfp over biggiecheese's face
 {goodbot} tells you which bot is best
-{kill @example} puts someones pfp getting killed
+{kill @example} puts someone's pfp getting killed
 {poop @example} puts someone's pfp over a pile of poop
-{snipe @example} puts someones pfp as if they where being sniped
-{thanos @example} puts someones pfp as thanos
-{trash @example} puts someones pfp over trash
+{snipe @example} puts someone's pfp as if they where being sniped
+{thanos @example} puts someone's pfp as thanos
+{trash @example} puts someone's pfp over trash
 {reverse} sends uno reverse card
 {rickroll} sends a rick roll
 
