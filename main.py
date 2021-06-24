@@ -640,6 +640,26 @@ async def update_bank(user,change = 0,mode = "wallet"):
 
 # -----------------------bot image editor commands-------------------------------------
 
+# makes a person's pfp go on top of crewmate's face when .ammogus @wumpus is input
+@client.command()
+async def amogus(ctx, user: discord.Member = None):
+    if user == None:
+        user = ctx.author
+
+    amogus = Image.open("amogus image.png")
+
+    asset = user.avatar_url_as(size = 128)
+    data = BytesIO(await asset.read())
+    pfp = Image.open(data)
+
+    pfp = pfp.resize((120,100))
+
+    amogus.paste(pfp, (203,165))
+
+    amogus.save("amogus pfp.png")
+
+    await ctx.send(file = discord.File("amogus pfp.png"))
+
 # makes a person's pfp go on an image when .kill @wumpus is input
 @client.command()
 async def kill(ctx, user: discord.Member = None):
@@ -850,7 +870,7 @@ async def help(ctx):
     with open("commands.txt", "r") as f:
         scores = f.read().splitlines()
 
-    final = '\n'.join(scores[0:55])
+    final = '\n'.join(scores[0:56])
     embed=discord.Embed(title="Commands", description=final)
     embed.colour = (0x964b00)
     await ctx.send(embed = embed)
