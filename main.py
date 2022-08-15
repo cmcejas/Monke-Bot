@@ -3,11 +3,11 @@ import discord
 from discord.ext import commands, tasks
 from discord.utils import get
 from PIL import Image
+from PIL import ImageFilter
 from io import BytesIO
 import random
 from random import randint
-import asyncio
-import apraw
+import praw
 import os
 import dbl
 import keep_alive
@@ -15,7 +15,7 @@ import json
 
 os.chdir("/home/runner/Monke-Bot-Discord")
 
-reddit = apraw.Reddit(client_id="USa6HVfdOsI7ww",
+reddit = praw.Reddit(client_id="USa6HVfdOsI7ww",
                      client_secret="CG9D0387TRRbP41e7P6NrZQl5Q2ukQ",
                      username="cmcool_",
                      password="Ilikememes55",
@@ -36,173 +36,34 @@ async def on_ready():
 
 # sends a meme when u write .meme REDDIT API YAY
 @client.command()
-async def meme(ctx):
-	subreddit = await reddit.subreddit("memes")
-	hot = subreddit.hot
-	async for submission in hot(limit=1):
-		submission = await subreddit.random()
-		embed = discord.Embed(title=submission.title, description=None)
-		embed.colour = random.randint(0x000000, 0XFFFFFE)
-		embed.url = submission.url
-		embed.set_image(url=submission.url)
-		embed.set_footer(
-		    text=f'👍 {submission.score}  |  💬 {submission.num_comments}')
-		await ctx.send(embed=embed)
-#------------------------------Other Games-------------------------------------------   
+async def meme (ctx):
+    subreddit = reddit.subreddit("meme")
+    all_subs = []
 
-# tic tac toe
-player1 = ""
-player2 = ""
-turn = ""
-gameOver = True
+    hot = subreddit.hot(limit=125)
+    for submission in hot:
+        all_subs.append(submission)
 
-board = []
+    random_sub = random.choice(all_subs)
 
-winningConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-]
+    name = random_sub.title
+    url = random_sub.url
 
-@client.command()
-async def tictactoe(ctx, p1: discord.Member, p2: discord.Member):
-    global count
-    global player1
-    global player2
-    global turn
-    global gameOver
+    em = discord.Embed(title = name)
+    em.colour = random.randint(0x000000, 0XFFFFFE)
+    em.set_image(url = url)
+    await ctx.send(embed = em)
 
-    if gameOver:
-        global board
-        board = [":white_large_square:", ":white_large_square:", ":white_large_square:",
-                 ":white_large_square:", ":white_large_square:", ":white_large_square:",
-                 ":white_large_square:", ":white_large_square:", ":white_large_square:"]
-        turn = ""
-        gameOver = False
-        count = 0
-
-        player1 = p1
-        player2 = p2
-
-        # print the board
-        line = ""
-        for x in range(len(board)):
-            if x == 2 or x == 5 or x == 8:
-                line += " " + board[x]
-                await ctx.send(line)
-                line = ""
-            else:
-                line += " " + board[x]
-
-        # determine who goes first
-        num = random.randint(1, 2)
-        if num == 1:
-            turn = player1
-            await ctx.send("It is <@" + str(player1.id) + ">'s turn.")
-        elif num == 2:
-            turn = player2
-            await ctx.send("It is <@" + str(player2.id) + ">'s turn.")
-    else:
-        await ctx.send("A game is already in progress! Finish it before starting a new one.")
-
-@client.command()
-async def place(ctx, pos: int):
-    global turn
-    global player1
-    global player2
-    global board
-    global count
-    global gameOver
-
-    if not gameOver:
-        mark = ""
-        if turn == ctx.author:
-            if turn == player1:
-                mark = ":regional_indicator_x:"
-            elif turn == player2:
-                mark = ":o2:"
-            if 0 < pos < 10 and board[pos - 1] == ":white_large_square:" :
-                board[pos - 1] = mark
-                count += 1
-
-                # print the board
-                line = ""
-                for x in range(len(board)):
-                    if x == 2 or x == 5 or x == 8:
-                        line += " " + board[x]
-                        await ctx.send(line)
-                        line = ""
-                    else:
-                        line += " " + board[x]
-
-                checkWinner(winningConditions, mark)
-                print(count)
-                if gameOver == True:
-                    await ctx.send(mark + " wins!")
-                elif count >= 9:
-                    gameOver = True
-                    await ctx.send("It's a tie!")
-
-                # switch turns
-                if turn == player1:
-                    turn = player2
-                elif turn == player2:
-                    turn = player1
-            else:
-                await ctx.send("Be sure to choose an integer between 1 and 9 (inclusive) and an unmarked tile.")
-        else:
-            await ctx.send("It is not your turn.")
-    else:
-        await ctx.send("Please start a new game using the .tictactoe command.")
-
-
-def checkWinner(winningConditions, mark):
-    global gameOver
-    for condition in winningConditions:
-        if board[condition[0]] == mark and board[condition[1]] == mark and board[condition[2]] == mark:
-            gameOver = True
-
-# rock paper scissors
-@client.command(help="Play with .rps [your choice]")
-async def rps(ctx):
-    rpsGame = ['rock', 'paper', 'scissors']
-    await ctx.send(f"Rock, paper, or scissors? Choose wisely...")
-
-    def check(msg):
-        return msg.author == ctx.author and msg.channel == ctx.channel and msg.content.lower() in rpsGame
-
-    user_choice = (await client.wait_for('message', check=check)).content
-
-    comp_choice = random.choice(rpsGame)
-    if user_choice == 'rock':
-        if comp_choice == 'rock':
-            await ctx.send(f'Well, {ctx.author.mention} that was weird. We tied.\nYour choice: {user_choice}\nMy choice: {comp_choice}')
-        elif comp_choice == 'paper':
-            await ctx.send(f'LOL get destroyed {ctx.author.mention} you noob, I won that time!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
-        elif comp_choice == 'scissors':
-            await ctx.send(f"WOW, {ctx.author.mention} you beat me. That was noob luck it won't happen again!\nYour choice: {user_choice}\nMy choice: {comp_choice}")
-
-    elif user_choice == 'paper':
-        if comp_choice == 'rock':
-            await ctx.send(f'HAHA {ctx.author.mention}, you are so bad you lost!!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
-        elif comp_choice == 'paper':
-            await ctx.send(f'Oh, what? {ctx.author.mention} we just tied. I call a rematch!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
-        elif comp_choice == 'scissors':
-            await ctx.send(f"{ctx.author.mention} you only won because you are cheating smh.\nYour choice: {user_choice}\nMy choice: {comp_choice}")
-
-    elif user_choice == 'scissors':
-        if comp_choice == 'rock':
-            await ctx.send(f'HAHA!! I JUST CRUSHED YOU, {ctx.author.mention}!! I rock!!\nYour choice: {user_choice}\nMy choice: {comp_choice}')
-        elif comp_choice == 'paper':
-            await ctx.send(f'Bruh {ctx.author.mention}. How did you win???\nYour choice: {user_choice}\nMy choice: {comp_choice}')
-        elif comp_choice == 'scissors':
-            await ctx.send(f"Oh well {ctx.author.mention}, we tied.\nYour choice: {user_choice}\nMy choice: {comp_choice}")
 #-----------------------------Economy System-----------------------------------------
+
+# secret free coins command
+@client.command()
+@commands.cooldown(rate=1, per=18000.0, type=commands.BucketType.member)
+async def brehfreeepicgamercoins(ctx):
+  await open_account(ctx.author)
+  await update_bank(ctx.author,+99999)
+  await ctx.send('CONGRATS! YOU HAVE FOUND THE SECRET CODE! Dont go and tell everyone, or the code will be changed')
+
 
 # balance command
 @client.command(aliases = ["bal"])
@@ -233,15 +94,15 @@ async def beg(ctx):
 
   user = ctx.author
 
-  earnings = random.randint(5, 50)
+  earnings = random.randint(0, 50)
 
-  await ctx.send(f"Monke gave {ctx.author.mention} {earnings} coins!")
+  await ctx.send(f"Monke gave you {earnings} coins!")
 
   users[str(user.id)]["wallet"] += earnings
 
   with open("mainbank.json","w") as f:
     json.dump(users,f)
-
+  
 # lottery
 @client.command(aliases = ["lot"])
 @commands.cooldown(rate=1, per=18000.0, type=commands.BucketType.member)
@@ -261,7 +122,7 @@ async def LotteryTicket(ctx):
   lotteryNumb= random.randint(0, 1000)
 
   if lotteryNumb == (1):
-    users[str(user.id)]["bank"] + (10000)
+    await update_bank(ctx.author,+10300)
     await ctx.send('CONGRATULATIONS! You just won the lottery! Here is 10,000 coins!')
   else:
     await ctx.send('Ah man, looks like you lost. You can try again in 5 hours.')
@@ -334,17 +195,17 @@ async def gift(ctx,member:discord.Member,amount = None):
     amount = bal[1]
 
   amount = int(amount)
-  if amount>bal[1]:
+  if amount>bal[0]:
     await ctx.send("You do not have that much money noob")
     return
   if amount<0:
     await ctx.send("Are you dumb? You cannot gift a negative amount of money")
     return
 
-  await update_bank(ctx.author,-1*amount,"bank")
+  await update_bank(ctx.author,-1*amount,"wallet")
   await update_bank(member,amount,"bank")
 
-  await ctx.send(f"{ctx.author.mention} gave {amount} coins to {member.mention}!")
+  await ctx.send(f"{ctx.author} gave {amount} coins to {member}!")
 
 # rob command
 @client.command()
@@ -356,7 +217,7 @@ async def rob(ctx,member:discord.Member):
   bal = await update_bank(member)
 
   if bal[0]<100:
-    await ctx.send("It's not worth robbing them they have less than 100 coins in there wallet. smh")
+    await ctx.send("It's not worth robbing them they don't even have 100 coins smh")
     return
 
   stolen_money = random.randrange(0, bal[0])
@@ -364,7 +225,7 @@ async def rob(ctx,member:discord.Member):
   await update_bank(ctx.author,stolen_money)
   await update_bank(member,-1*stolen_money)
 
-  await ctx.send(f"{ctx.author.mention} robbed {member.mention} for {stolen_money} coins!")
+  await ctx.send(f"{ctx.author} robbed {member} for {stolen_money} coins!")
 
 #slots command
 @client.command()
@@ -387,7 +248,7 @@ async def slots(ctx,amount = None):
 
   final = []
   for i in range(3):
-    a = random.choice(["`♠`","`♣`","`♦`"])
+    a = random.choice(["X","O","Q"])
 
     final.append(a)
   await ctx.send(str(final))
@@ -400,10 +261,8 @@ async def slots(ctx,amount = None):
     await ctx.send("LOL what a noob you lost!")
 
 # sets up the shop
-mainshop = [{"name":"School_Chromebook","price":1,"description":"A.K.A. Garbage"},
-            {"name":"cmcool's_PC","price":10000,"description":"1 million FPS"},
-            {"name":"Almighty_Banana","price":9999999999,"description":"Monke Bot's banana"}]
-
+mainshop = [{"name":"School_Chromebook","price":1,"description":"A.K.A. Garbage"}, {"name":"cmcools_PC","price":500,"description":"1 million FPS"}, {"name":"Almighty_Banana","price":9999999999,"description":"Monke Bots banana"},
+{"name":"Communist_Meme","price":10000,"description":"Weekly Item"}]
 
 @client.command()
 async def shop(ctx):
@@ -417,7 +276,7 @@ async def shop(ctx):
         em.add_field(name = name, value = f"${price} | {desc}", inline = False)
 
     await ctx.send(embed = em)
-    await ctx.send('You can buy lottery tickets for 300 coins with the command .LotteryTicket')
+    await ctx.send('You can buy lottery tickets for 300 coins with the command .LotteryTickets')
 
 
 @client.command()
@@ -437,28 +296,30 @@ async def buy(ctx,item,amount = 1):
 
     await ctx.send(f"You just bought {amount} {item}")
 
-
+# inventory
 @client.command(aliases = ["inv"])
-async def inventory(ctx):
-    await open_account(ctx.author)
-    user = ctx.author
-    users = await get_bank_data()
+async def inventory(ctx, user: discord.Member = None):
+  if user == None:
+        user = ctx.author
 
-    try:
-        bag = users[str(user.id)]["bag"]
-    except:
-        bag = []
+  await open_account(user)
+  users = await get_bank_data()
+
+  try:
+    bag = users[str(user.id)]["bag"]
+  except:
+    bag = []
 
 
-    em = discord.Embed(title = "Inventory")
-    for item in bag:
-        name = item["item"]
-        amount = item["amount"]
+  em = discord.Embed(title = f"{user}'s Inventory")
+  for item in bag:
+    name = item["item"]
+    amount = item["amount"]
 
-        em.add_field(name = name, value = amount, inline = False)    
-        em.colour = (0xFFFF00)
+    em.add_field(name = name, value = amount, inline = False)    
+    em.colour = (0xFFFF00)
 
-    await ctx.send(embed = em)
+  await ctx.send(embed = em)
 
 # buy items from the shop
 async def buy_this(user,item_name,amount):
@@ -640,25 +501,17 @@ async def update_bank(user,change = 0,mode = "wallet"):
 
 # -----------------------bot image editor commands-------------------------------------
 
-# makes a person's pfp go on top of crewmate's face when .ammogus @wumpus is input
+# image deepfrier
 @client.command()
-async def amogus(ctx, user: discord.Member = None):
-    if user == None:
-        user = ctx.author
+async def deepfry(ctx):
+  deepfry = Image.open("deepfry.png")
+  
+  ogImage = ctx.message.attachments[0].url
 
-    amogus = Image.open("amogus image.png")
-
-    asset = user.avatar_url_as(size = 128)
-    data = BytesIO(await asset.read())
-    pfp = Image.open(data)
-
-    pfp = pfp.resize((120,100))
-
-    amogus.paste(pfp, (203,165))
-
-    amogus.save("amogus pfp.png")
-
-    await ctx.send(file = discord.File("amogus pfp.png"))
+  deepfry.paste(ogImage, (1,1))
+  deepfry = Image.filter(ImageFilter.SHARPEN)
+  deepfry.save("deepfry.png")
+  await ctx.send(file = discord.File("deepfry.png"))
 
 # makes a person's pfp go on an image when .kill @wumpus is input
 @client.command()
@@ -850,11 +703,6 @@ async def bruh(ctx):
     open('bruh sound effect.mp3')
     await ctx.send(file = discord.File("bruh sound effect.mp3"))
 
-@client.command()
-async def oof(ctx):
-  open('oof.mp3')
-  await ctx.send(file = discord.File("oof.mp3"))
-
 # -----------------------------------TOP.GG API--------------------------------
 client.load_extension('cogs.TopGG')
 # --------------------------------------INFO----------------------------------
@@ -870,7 +718,7 @@ async def help(ctx):
     with open("commands.txt", "r") as f:
         scores = f.read().splitlines()
 
-    final = '\n'.join(scores[0:56])
+    final = '\n'.join(scores[0:45])
     embed=discord.Embed(title="Commands", description=final)
     embed.colour = (0x964b00)
     await ctx.send(embed = embed)
@@ -891,38 +739,22 @@ async def about(ctx):
     embed.colour = (0x964b00)
     await ctx.send(embed = embed)
 
-    with open('invite link', 'r') as f:
+    with open('invite link.txt', 'r') as f:
         file = [i.rstrip() for i in f.readlines()]
         for line in file:
             await ctx.send(line)
 
-#sends the bot invite link when .invite is input
+# sends the bot's top.gg page when .upvote is input
 @client.command()
-async def invite(ctx):
-  await ctx.send('Here is the bot invite link: https://discord.com/api/oauth2/authorize?client_id=778424945607704576&permissions=8&scope=bot')
-
-#sends the help server invite when .srvinvite is input
-@client.command()
-async def srvinvite(ctx):
-  await ctx.send('discord.gg/HpEGNvur28')
-
-# sends the bot topgg page when .topgg is sent
-@client.command()
-async def topgg(ctx):
-  await ctx.send('https://top.gg/bot/778424945607704576')
-
-# sends the bot's discord bot list page when .dbl is input
-@client.command()
-async def dbl(ctx):
-  await ctx.send('https://discord.ly/monke-bot')
+async def upvote(ctx):
+  await ctx.send('You can upvote the bot here: https://top.gg/bot/778424945607704576')
 
 # sends the bot's website link
 @client.command()
 async def website(ctx):
   await ctx.send('https://sites.google.com/view/monke-bot')
 
-# -----------------------------------error handeling----------------------------------
-# economy
+# error handeling
 @client.event
 async def on_command_error(ctx,error):
   if isinstance(error,commands.CommandOnCooldown):
@@ -930,25 +762,9 @@ async def on_command_error(ctx,error):
         scores = f.read().splitlines()
 
     final = '\n'.join(scores[0:1])
-    embed=discord.Embed(title="WAIT!  ⏰", description=final)
+    embed=discord.Embed(title="WAIT", description=final)
     embed.colour = (0xFF0000)
     await ctx.send(embed = embed)
-
-# tic tac toe
-@tictactoe.error
-async def tictactoe_error(ctx, error):
-    print(error)
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please mention 2 players for this command.")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send("Please make sure to mention/ping players (ie. <@688534433879556134>).")
-
-@place.error
-async def place_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please enter a position you would like to mark.")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send("Please make sure to enter an integer.")
 
 # connects bot to discord
 keep_alive.keep_alive()
