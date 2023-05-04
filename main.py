@@ -15,11 +15,11 @@ import json
 
 os.chdir("/home/runner/Monke-Bot-Discord")
 
-reddit = praw.Reddit(client_id="USa6HVfdOsI7ww",
-                     client_secret="CG9D0387TRRbP41e7P6NrZQl5Q2ukQ",
-                     username="cmcool_",
-                     password="Ilikememes55",
-                     user_agent="DiscordBot")
+reddit = praw.Reddit(client_id="", # all credentials went here
+                     client_secret="",
+                     username="",
+                     password="",
+                     user_agent="")
 
 # allows intents
 intents = discord.Intents.default()
